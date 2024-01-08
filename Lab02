@@ -1,5 +1,6 @@
-import tenserflow as tf
-tf.enable_eager_execution()
+import tensorflow as tf
+tf.executing_eagerly()
+#코랩 통해서 돌려본 버젼이 텐서플로우2 이상인거같아서 tf.enable_eager_execution()대신 저거로 바꿈
 
 #data
 x_data = [1,2,3,4,5]
@@ -28,7 +29,7 @@ learning_rate = 0.01
 
 # Gradient descent
 
-with tf.GradientTape() as tape
+with tf.GradientTape() as tape:
   hypothesis = W * x_data + b
   cost = tf.reduce_mean(tf.square(hypothesis - y_data))
 # with 구문으로 그 아래 두줄 내용 블럭 변수들의 변화를 정보를 tape에 기록,
@@ -49,7 +50,7 @@ b.assign_sub(learning_rate * b_grad)
 
 
 for i in range(100): 
-        with tf.GradientTape() as tape
+        with tf.GradientTape() as tape:
           hypothesis = W * x_data + b
           cost = tf.reduce_mean(tf.square(hypothesis - y_data))
         
@@ -57,8 +58,8 @@ for i in range(100):
         W.assign_sub(learning_rate * W_grad)
         b.assign_sub(learning_rate * b_grad)
 if i %10 == 0:
-print("{:5}|{:10.4}|{:10.4}|{10.6f}",format(i, W.numpy(), b.numpy(), cost))
-
+  print("{:5}|{:10.4f}|{:10.4}|{10.6f}",format(i, W.numpy(), b.numpy(), cost))
+# print 앞에 들여쓰기 안해서 indentation 오류 ^^;
 # for 문으로 반복 100번 epoch!, 10의 배수 번째 마다 이런 자리수로 출력하도록 
 
 
