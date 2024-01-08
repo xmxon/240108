@@ -1,0 +1,74 @@
+import tenserflow as tf
+tf.enable_eager_execution()
+
+#data
+x_data = [1,2,3,4,5]
+y_data = [1,2,3,4,5]
+
+# W,b initialize : H(x)= Wx+b 에서 1,0 나와야 정답인데, 맞는지 확인하려고 그냥 임의로 두 값 설정
+W=tf.Variable(2.9)
+b=tf.Variable(0.5) 
+
+#hypothesis = W*x_data +b
+#cost = tf.reduce_mean(tf.square(hypothesis - y_data)) #코스트 함수는 에러 제곱의 평균
+
+
+# 텐서플로우의 두 함수 설명!
+#v=[1.,2.,3.,4.]
+#tf.reduce_mean(v) #2.5 : 차원이 하나 줄어든다는 의미의 reduce도 있음, 1차원에서 0차원으로 줄었음
+
+#tf.square(3) #9 : 제곱하는 함수
+
+
+
+# GRADIENT DESCENT : cost 를 minimize 하는 W와 b를 찾는 대표적인 알고리즘, 경사하강법
+
+#Learning_Rate initialize
+learning_rate = 0.01
+
+# Gradient descent
+
+with tf.GradientTape() as tape
+  hypothesis = W * x_data + b
+  cost = tf.reduce_mean(tf.square(hypothesis - y_data))
+# with 구문으로 그 아래 두줄 내용 블럭 변수들의 변화를 정보를 tape에 기록,
+# 여기서 변수는 W와 b 두개를 말함
+
+
+W_grad, b_grad = tape.gradient(cost, [W,b])
+# tape.gradient 메서드를 호출해서 경사도 값, 즉 미분값을 구함
+# 이 gradient 함수는 [W,b] <- cost 함수에 대해서 얘네 변수들에 대한 개별 미분값, 즉 기울기 값을 구해서 _grad 들로 반환
+# W_grad 는 w의 미분값, w의 기울기
+
+W.assign_sub(learning_rate * W_grad)
+b.assign_sub(learning_rate * b_grad)
+# a.assign_sub(b) : 파이썬에서 뺀 값을 다시 그 값에 할당해주는 함수 역할의 텐서 버전, a = a-b, a-=b
+# W와 b를 각각 업데이트, learningrate는 이 gradient 값을 얼만큼 반영할 것인지를 결정, 보통 0.0001 같은 매우 작은값 사용
+# 즉, 기울기 값을 gradient를 구했을 때, 이 기울기를 얼만큼 반영할 것인가를 결정!
+# 여기까지가 한 블록 ! w 와 b 가 한 번 업데이트 된 부분, 이걸 여러번 수행
+
+
+for i in range(100): 
+        with tf.GradientTape() as tape
+          hypothesis = W * x_data + b
+          cost = tf.reduce_mean(tf.square(hypothesis - y_data))
+        
+        W_grad, b_grad = tape.gradient(cost, [W,b])
+        W.assign_sub(learning_rate * W_grad)
+        b.assign_sub(learning_rate * b_grad)
+if i %10 == 0:
+print("{:5}|{:10.4}|{:10.4}|{10.6f}",format(i, W.numpy(), b.numpy(), cost))
+
+# for 문으로 반복 100번 epoch!, 10의 배수 번째 마다 이런 자리수로 출력하도록 
+
+
+
+
+
+
+
+
+
+
+
+
